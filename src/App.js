@@ -1,17 +1,22 @@
-// App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
 import StudentDashboard from './components/StudentDashboard';
 import TeacherDashboard from './components/TeacherDashboard';
-import Login from './components/Login'; // Make sure you import the Login component
+import CreateBlog from './components/CreateBlog';
+import ViewBlogs from './components/ViewBlogs';
+import BlogDetail from './components/BlogDetail';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} /> {/* Use 'element' prop */}
+        <Route path="/" element={<Login />} />
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/create-blog" element={<CreateBlog />} />
+        <Route path="/view-blogs" element={<ViewBlogs />} />
+        <Route path="/blogs/:id" element={<BlogDetail />} />
       </Routes>
     </Router>
   );

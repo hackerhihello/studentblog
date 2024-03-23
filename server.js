@@ -1,79 +1,201 @@
+// Import required modules
 const express = require('express');
-const cors = require('cors'); // Import the cors middleware
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
+// Middleware
 app.use(express.json());
-// Use the cors middleware
 app.use(cors());
 
-// Example data - pending blogs
-let pendingBlogs = [
-  { id: 1, title: 'Blog 1', content: 'Content of Blog 1' },
-  { id: 2, title: 'Blog 2', content: 'Content of Blog 2' },
-];
-
-let acceptedBlogs = [
-    { id: 3, title: 'Accepted Blog 1', content: 'Content of Accepted Blog 1' },
-    { id: 4, title: 'Accepted Blog 2', content: 'Content of Accepted Blog 2' },
-  ]; // Initialize empty array for accepted blogs
-
-  let rejectedBlogs = [
-    { id: 5, title: 'reject Blog 1', content: 'Content of reject Blog 1' },
-    { id: 6, title: 'reject Blog 2', content: 'Content of reject Blog 2' },
-  ]; 
-// Route to get pending blogs
-app.get('/api/teacher/pending-blogs', (req, res) => {
-  res.json(pendingBlogs);
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/studentBlogDB', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-// Route to accept a blog
-app.post('/api/teacher/accept-blog/:id', (req, res) => {
-  const { id } = req.params;
-  // Find the blog by id in pending blogs
-  const blogIndex = pendingBlogs.findIndex(blog => blog.id == id);
-  if (blogIndex !== -1) {
-    // Remove the blog from pending blogs and move to accepted blogs
-    const acceptedBlog = pendingBlogs.splice(blogIndex, 1)[0];
-    acceptedBlogs.push(acceptedBlog);
-    res.json(acceptedBlog);
-  } else {
-    res.status(404).json({ message: 'Blog not found' });
+// Define student schema
+const studentSchema = new mongoose.Schema({
+  email: { type: String, unique: true },
+  password: String,
+  blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],
+});
+
+// Define blog schema
+const blogSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  status: { type: String, default: 'pending' }, // Status can be 'pending', 'accepted', 'rejected'
+});
+
+// Create models
+const Student = mongoose.model('Student', studentSchema);
+const Blog = mongoose.model('Blog', blogSchema);
+
+// Routes
+// Student registration
+app.post('/api/register', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // Check if student already exists
+    const existingStudent = await Student.findOne({ email });
+    if (existingStudent) {
+      return res.status(400).json({ message: 'Student already exists' });
+    }
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // Create new student
+    const student = new Student({ email, password: hashedPassword });
+    await student.save();
+    res.json({ message: 'Registration successful' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// Route to reject a blog
-app.post('/api/teacher/reject-blog/:id', (req, res) => {
-    const { id } = req.params;
-    // Find the blog by id
-    const blogIndex = pendingBlogs.findIndex(blog => blog.id == id);
-    if (blogIndex !== -1) {
-      // Remove the blog from pending blogs and move to rejected blogs
-      const rejectedBlog = pendingBlogs.splice(blogIndex, 1)[0];
-      rejectedBlogs.push(rejectedBlog);
-      res.json(rejectedBlog);
-    } else {
-      res.status(404).json({ message: 'Blog not found' });
+// Route to handle login
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const student = await Student.findOne({ email });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
     }
-  });
-
-// Route to get accepted blogs for students
-app.get('/api/student/blogs', (req, res) => {
-  res.json(acceptedBlogs);
+    if (await bcrypt.compare(password, student.password)) {
+      res.json({ message: 'Login successful' });
+    } else {
+      res.status(401).json({ message: 'Invalid password' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
-// Route to get accepted blogs for students based on ID
-app.get('/api/student/blogs/:id', (req, res) => {
-    const { id } = req.params;
-    const blog = acceptedBlogs.find(blog => blog.id === parseInt(id));
-    if (blog) {
-      res.json(blog);
-    } else {
-      res.status(404).json({ message: 'Blog not found' });
+// Create blog
+app.post('/api/student/blogs', async (req, res) => {
+  const { email, title, content } = req.body;
+  try {
+    const student = await Student.findOne({ email });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
     }
-  });
-  
+    const blog = new Blog({ title, content });
+    await blog.save();
+    student.blogs.push(blog);
+    await student.save();
+    res.json({ message: 'Blog created successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Fetch blogs for a student
+app.get('/api/student/blogs/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+    // Find the student by email
+    const student = await Student.findOne({ email }).populate('blogs');
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // Return the blogs associated with the student
+    res.json(student.blogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Fetch pending blogs for teacher
+app.get('/api/teacher/pending-blogs', async (req, res) => {
+  try {
+    const pendingBlogs = await Blog.find({ status: 'pending' });
+    res.json(pendingBlogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Accept blog
+app.put('/api/teacher/accept-blog/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(id, { status: 'accepted' });
+    if (!updatedBlog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    res.json({ message: 'Blog accepted successfully' });
+  } catch (error) {
+    console.error('Error accepting blog:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Route to get a specific accepted blog by ID
+app.get('/api/teacher/accept-blog/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Find the accepted blog by its ID
+    const acceptedBlog = await Blog.findById(id);
+
+    // Check if the accepted blog exists
+    if (!acceptedBlog) {
+      // If the blog is not found, return a 404 response
+      return res.status(404).json({ message: 'Accepted blog not found' });
+    }
+
+    // If the accepted blog is found, send it as a response
+    res.json({ acceptedBlog });
+  } catch (error) {
+    // If an error occurs during the process, log the error and send a 500 response
+    console.error('Error fetching accepted blog:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+// Reject blog
+app.put('/api/teacher/reject-blog/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(id, { status: 'rejected' });
+    if (!updatedBlog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    res.json({ message: 'Blog rejected successfully' });
+  } catch (error) {
+    console.error('Error rejecting blog:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Cancel blog (by student)
+app.put('/api/student/cancel-blog/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(id, { status: 'canceled' });
+    if (!updatedBlog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    res.json({ message: 'Blog canceled successfully' });
+  } catch (error) {
+    console.error('Error canceling blog:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Fetch all blogs
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const allBlogs = await Blog.find();
+    res.json(allBlogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -1,78 +1,51 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const TeacherDashboard = () => {
   const [pendingBlogs, setPendingBlogs] = useState([]);
 
   useEffect(() => {
-    // Fetch pending blogs for teachers
-    // Example API call
-    fetch('http://localhost:3000/api/teacher/pending-blogs')
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => setPendingBlogs(data))
-      .catch(error => console.error('Error fetching data:', error));
+    // Fetch pending blogs for teacher
+    axios.get('http://localhost:3000/api/teacher/pending-blogs')
+      .then(response => setPendingBlogs(response.data))
+      .catch(error => console.error('Error fetching pending blogs:', error));
   }, []);
 
-
-  const handleAccept = (blogId) => {
-    // Update the status of the blog to accepted
-    // Example API call
-    fetch(`http://localhost:3000/api/teacher/accept-blog/${blogId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status: 'accepted' }),
-    })
+  const handleAccept = (id) => {
+    // Handle accepting a blog
+    axios.put(`http://localhost:3000/api/teacher/accept-blog/${id}`)
       .then(response => {
-        if (response.ok) {
-          // Remove the accepted blog from the pending blogs list
-          setPendingBlogs(pendingBlogs.filter(blog => blog.id !== blogId));
-        }
+        console.log(response.data);
+        // Remove the accepted blog from the list
+        setPendingBlogs(pendingBlogs.filter(blog => blog.id !== id));
       })
       .catch(error => console.error('Error accepting blog:', error));
   };
-
-  const handleReject = (blogId) => {
-    // Update the status of the blog to rejected
-    // Example API call
-    fetch(`http://localhost:3000/api/teacher/reject-blog/${blogId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status: 'rejected' }),
-    })
+  
+  const handleReject = (id) => {
+    // Handle rejecting a blog
+    axios.put(`http://localhost:3000/api/teacher/reject-blog/${id}`)
       .then(response => {
-        if (response.ok) {
-          // Remove the rejected blog from the pending blogs list
-          setPendingBlogs(pendingBlogs.filter(blog => blog.id !== blogId));
-        }
+        console.log(response.data);
+        // Remove the rejected blog from the list
+        setPendingBlogs(pendingBlogs.filter(blog => blog.id !== id));
       })
       .catch(error => console.error('Error rejecting blog:', error));
   };
-
+  
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Teacher Dashboard</h2>
-      <div className="row">
+    <div className="container">
+      <h2>Teacher Dashboard</h2>
+      <ul className="list-group">
         {pendingBlogs.map(blog => (
-          <div key={blog.id} className="col-md-4 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">{blog.title}</h5>
-                <p className="card-text">{blog.content}</p>
-                <button onClick={() => handleAccept(blog.id)} className="btn btn-success mr-5">Accept</button>
-                <button onClick={() => handleReject(blog.id)} className="btn btn-danger mr-5">Reject</button>
-              </div>
-            </div>
-          </div>
+          <li key={blog.id} className="list-group-item">
+            <h5>{blog.title}</h5>
+            <p>{blog.content}</p>
+            <button className="btn btn-success me-2" onClick={() => handleAccept(blog._id)}>Accept</button>
+            <button className="btn btn-danger" onClick={() => handleReject(blog._id)}>Reject</button>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };

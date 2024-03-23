@@ -3,15 +3,16 @@ import { useParams } from 'react-router-dom'; // Import useParams hook
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'; // Import the thumbs-up icon
 
-const BlogDetail = ({ id }) => {
+const BlogDetail = () => {
   // Fetch blog details using the id
   // Example API call
+  const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [likes, setLikes] = useState(0); // State to track the number of likes
 
   useEffect(() => {
     // Fetch blog by ID
-    fetch(`http://localhost:3000/api/student/blogs/${id}`)
+    fetch(`http://localhost:3000/api/teacher/accept-blog/${id}`)
       .then(response => response.json())
       .then(data => {
         // Handle the retrieved blog data
@@ -33,19 +34,23 @@ const BlogDetail = ({ id }) => {
   return (
     <div className="container">
       <h4 className="mt-4">Blog Detail</h4>
-      {blog && (
+      {blog ? (
         <div className="card mt-4">
           <div className="card-body">
-            <h3 className="card-title">{blog.title}</h3>
-            <p className="card-text">{blog.content}</p>
+            <h3 className="card-title">{blog.acceptedBlog.title}</h3>
+            <p className="card-text">{blog.acceptedBlog.content}</p>
             <button className="btn btn-primary" onClick={handleLike}>
               <FontAwesomeIcon icon={faThumbsUp} /> Like
             </button>
             <span className="ml-2">{likes} Likes</span>
           </div>
         </div>
+      ): (
+        <p>Loading...</p>
       )}
+
     </div>
+    
   );
 };
 

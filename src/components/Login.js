@@ -1,33 +1,66 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [userType, setUserType] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('student');
+  const navigate = useNavigate();
 
-  const handleLogin = (type) => {
-    setUserType(type);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:3000/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+
+      if (data.message === 'Login successful') {
+        // Store email in session storage upon successful login
+        sessionStorage.setItem('email', email);
+
+        if (role === 'student') {
+          navigate('/student');
+        } else if (role === 'teacher') {
+          navigate('/teacher');
+        }
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    }
   };
 
   return (
-    <div className="container mt-5">
-     <h2 className="mb-4 text-center">Login Page</h2>
-
-      <div className="d-flex justify-content-center">
-        <button className="btn btn-primary mx-2" onClick={() => handleLogin('student')}>Student Login</button>
-        <button className="btn btn-primary mx-2" onClick={() => handleLogin('teacher')}>Teacher Login</button>
-      </div>
-      {userType === 'student' && (
-        <div className="mt-4">
-          <p className="mb-2">Welcome, Student!</p>
-          <Link className="btn btn-success" to="/student">Go to Student Dashboard</Link>
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email:</label>
+          <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
-      )}
-      {userType === 'teacher' && (
-        <div className="mt-4">
-          <p className="mb-2">Welcome, Teacher!</p>
-          <Link className="btn btn-success" to="/teacher">Go to Teacher Dashboard</Link>
+        <div>
+          <label>Password:</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
-      )}
+        <div>
+          <label>Role:</label>
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+        </div>
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 };
