@@ -6,12 +6,14 @@ import TeacherDashboard from './components/TeacherDashboard';
 import CreateBlog from './components/CreateBlog';
 import ViewBlogs from './components/ViewBlogs';
 import BlogDetail from './components/BlogDetail';
+import Register from './components/Register';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route exact path="/register" element={ <Register />} />
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/teacher" element={<TeacherDashboard />} />
         <Route path="/create-blog" element={<CreateBlog />} />
