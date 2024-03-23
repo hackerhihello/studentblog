@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const StudentDashboard = () => {
   const [blogs, setBlogs] = useState([]);
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch student's email from the session storage
@@ -18,13 +19,25 @@ const StudentDashboard = () => {
     // Fetch student's blogs based on email from the backend API
     fetch(`http://localhost:3000/api/student/blogs/${userEmail}`)
       .then(response => response.json())
-      .then(data => setBlogs(data))
+      .then(data => {
+        // Filter out the accepted blogs
+        const acceptedBlogs = data.filter(blog => blog.status === 'accepted');
+        setBlogs(acceptedBlogs);
+      })
       .catch(error => console.error('Error fetching blogs:', error));
   }, []);
+  
+  const handleCreateBlog = () => {
+    navigate('/create-blog');
+  };
+
   // console.log(blogs);
   return (
     <div className="container">
       <h2 className="mt-4">Student Dashboard</h2>
+      <div className="d-flex justify-content-end mt-2">
+        <button className="btn btn-primary" onClick={handleCreateBlog}>Create Blog</button>
+      </div>
       <ul className="list-group mt-4">
         {blogs.map(blog => (
           <li key={blog._id} className="list-group-item">
