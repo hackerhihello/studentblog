@@ -30,13 +30,18 @@ const StudentDashboard = () => {
   const handleCreateBlog = () => {
     navigate('/create-blog');
   };
+  const handleViewBlogs = () => {
+    navigate('/view-blogs');
+  };
+
 
   // console.log(blogs);
   return (
     <div className="container">
       <h2 className="mt-4">Student Dashboard</h2>
       <div className="d-flex justify-content-end mt-2">
-        <button className="btn btn-primary" onClick={handleCreateBlog}>Create Blog</button>
+        <button className="btn btn-primary me-2" onClick={handleCreateBlog}>Create Blog</button>
+        <button className="btn btn-primary" onClick={handleViewBlogs}>View Blogs</button>
       </div>
       <ul className="list-group mt-4">
         {blogs.map(blog => (
