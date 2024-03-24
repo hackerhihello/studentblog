@@ -10,13 +10,18 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3000/api/register', { email, password });
+      const res = await axios.post('http://localhost:5000/api/register', { email, password });
       console.log(res.data); // handle success message
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error('Registration error:', error);
     }
   };
+
+  const handleLoginClick = () => {
+    navigate("/login"); // Navigate to the login page
+  };
+
 
   return (
     <div className="container">
@@ -32,6 +37,7 @@ const Register = () => {
         </div>
         <button type="submit" className="btn btn-primary">Register</button>
       </form>
+      <button type="button" className="btn btn-primary" onClick={handleLoginClick}>Login</button>
     </div>
   );
 };

@@ -12,7 +12,7 @@ const BlogDetail = () => {
 
   useEffect(() => {
     // Fetch blog by ID
-    fetch(`http://localhost:3000/api/teacher/accept-blog/${id}`)
+    fetch(`http://localhost:5000/api/teacher/accept-blog/${id}`)
       .then(response => response.json())
       .then(data => {
         // Handle the retrieved blog data

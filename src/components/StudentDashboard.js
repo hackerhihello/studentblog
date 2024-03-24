@@ -17,7 +17,7 @@ const StudentDashboard = () => {
     setEmail(userEmail);
 
     // Fetch student's blogs based on email from the backend API
-    fetch(`http://localhost:3000/api/student/blogs/${userEmail}`)
+    fetch(`http://localhost:5000/api/student/blogs/${userEmail}`)
       .then(response => response.json())
       .then(data => {
         // Filter out the accepted blogs
@@ -33,6 +33,9 @@ const StudentDashboard = () => {
   const handleViewBlogs = () => {
     navigate('/view-blogs');
   };
+  const handleCancleBlogs = () => {
+    navigate('/cancel-blogs');
+  };
 
 
   // console.log(blogs);
@@ -41,7 +44,8 @@ const StudentDashboard = () => {
       <h2 className="mt-4">Student Dashboard</h2>
       <div className="d-flex justify-content-end mt-2">
         <button className="btn btn-primary me-2" onClick={handleCreateBlog}>Create Blog</button>
-        <button className="btn btn-primary" onClick={handleViewBlogs}>View Blogs</button>
+        <button className="btn btn-primary me-2" onClick={handleViewBlogs}>View Blogs</button>
+        <button className="btn btn-primary" onClick={handleCancleBlogs}>Cancel Blogs</button>
       </div>
       <ul className="list-group mt-4">
         {blogs.map(blog => (

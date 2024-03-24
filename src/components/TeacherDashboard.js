@@ -6,14 +6,14 @@ const TeacherDashboard = () => {
 
   useEffect(() => {
     // Fetch pending blogs for teacher
-    axios.get('http://localhost:3000/api/teacher/pending-blogs')
+    axios.get('http://localhost:5000/api/teacher/pending-blogs')
       .then(response => setPendingBlogs(response.data))
       .catch(error => console.error('Error fetching pending blogs:', error));
   }, []);
 
   const handleAccept = (id) => {
     // Handle accepting a blog
-    axios.put(`http://localhost:3000/api/teacher/accept-blog/${id}`)
+    axios.put(`http://localhost:5000/api/teacher/accept-blog/${id}`)
       .then(response => {
         console.log(response.data);
         // Remove the accepted blog from the list
@@ -24,7 +24,7 @@ const TeacherDashboard = () => {
   
   const handleReject = (id) => {
     // Handle rejecting a blog
-    axios.put(`http://localhost:3000/api/teacher/reject-blog/${id}`)
+    axios.put(`http://localhost:5000/api/teacher/reject-blog/${id}`)
       .then(response => {
         console.log(response.data);
         // Remove the rejected blog from the list

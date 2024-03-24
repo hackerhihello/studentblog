@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 5000;
 
 // Middleware
 app.use(express.json());
@@ -186,15 +186,40 @@ app.put('/api/student/cancel-blog/:id', async (req, res) => {
   }
 });
 
-// Fetch all blogs
-app.get('/api/blogs', async (req, res) => {
+// Fetch blogs with status 'rejected'
+app.get('/api/rejectblogs', async (req, res) => {
   try {
-    const allBlogs = await Blog.find();
-    res.json(allBlogs);
+    const rejectedBlogs = await Blog.find({ status: 'rejected' });
+    res.json(rejectedBlogs);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
-  }
+  }    
 });
+
+// Fetch pending and accepted blogs
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const pendingBlogs = await Blog.find({ status: 'pending' });
+    const acceptedBlogs = await Blog.find({ status: 'accepted' });
+    const blogs = { pending: pendingBlogs, accepted: acceptedBlogs };
+    res.json(blogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }    
+});
+
+
+
+// Fetch all blogs
+// app.get('/api/blogs', async (req, res) => {
+//   try {
+//     const allBlogs = await Blog.find();
+//     res.json(allBlogs);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Internal server error' });
+//   }
+// });
+
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');

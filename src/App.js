@@ -7,17 +7,19 @@ import CreateBlog from './components/CreateBlog';
 import ViewBlogs from './components/ViewBlogs';
 import BlogDetail from './components/BlogDetail';
 import Register from './components/Register';
+import CancelBlogs from './components/CancelBlogs';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route exact path="/register" element={ <Register />} />
+        <Route exact path="/" element={ <Register />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/teacher" element={<TeacherDashboard />} />
         <Route path="/create-blog" element={<CreateBlog />} />
         <Route path="/view-blogs" element={<ViewBlogs />} />
+        <Route path="/cancel-blogs" element={<CancelBlogs />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
       </Routes>
     </Router>

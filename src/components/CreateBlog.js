@@ -16,7 +16,7 @@ const CreateBlog = () => {
       }
 
       // Send a POST request to create a new blog
-      const response = await axios.post('http://localhost:3000/api/student/blogs', {
+      const response = await axios.post('http://localhost:5000/api/student/blogs', {
         email,
         title,
         content
