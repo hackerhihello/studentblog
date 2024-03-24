@@ -6,10 +6,10 @@ const ViewBlogs = () => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    // Fetch all blogs
+   
     axios.get('http://localhost:5000/api/blogs')
       .then(response => {
-        // Combine all blogs from different status categories into one array
+        
         const allBlogs = Object.values(response.data).flat();
         setBlogs(allBlogs);
       })
@@ -36,7 +36,7 @@ const ViewBlogs = () => {
   );
 }
 
-// Function to get Bootstrap badge color based on blog status
+
 const getStatusColor = status => {
   switch (status) {
     case 'pending':

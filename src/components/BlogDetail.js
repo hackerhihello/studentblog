@@ -20,13 +20,10 @@ const BlogDetail = () => {
   }, [id]);
 
   const handleLike = () => {
-    // Simulate the like functionality by updating the likes count
     setLikes(likes + 1);
-    // You can also send a request to the server to update the likes count in the database
   };
 
   const handleShare = () => {
-    // Check if the share API is supported by the browser
     if (navigator.share) {
       navigator.share({
         title: blog.title,

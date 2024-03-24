@@ -6,7 +6,6 @@ const CancelBlogs = () => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    // Fetch all blogs
     axios.get('http://localhost:5000/api/rejectblogs')
       .then(response => setBlogs(response.data))
       .catch(error => console.error('Error fetching blogs:', error));

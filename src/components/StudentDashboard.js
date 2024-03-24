@@ -7,20 +7,18 @@ const StudentDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch student's email from the session storage
+   
     const userEmail = sessionStorage.getItem('email');
     if (!userEmail) {
-      // Handle case where email is not found (user is not logged in)
       console.error('User is not logged in');
       return;
     }
     setEmail(userEmail);
 
-    // Fetch student's blogs based on email from the backend API
     fetch(`http://localhost:5000/api/student/blogs/${userEmail}`)
       .then(response => response.json())
       .then(data => {
-        // Filter out the accepted blogs
+       
         const acceptedBlogs = data.filter(blog => blog.status === 'accepted');
         setBlogs(acceptedBlogs);
       })

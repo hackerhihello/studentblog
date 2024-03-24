@@ -26,7 +26,7 @@ const Login = () => {
       console.log(data.message);
 
       if (data.message === 'Login successful') {
-        // Store email in session storage upon successful login
+        
         sessionStorage.setItem('email', email);
 
         if (role === 'student') {

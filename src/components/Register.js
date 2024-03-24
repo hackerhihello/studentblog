@@ -11,7 +11,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/api/register', { email, password });
-      console.log(res.data); // handle success message
+      console.log(res.data); 
       navigate("/login");
     } catch (error) {
       console.error('Registration error:', error);
@@ -19,7 +19,7 @@ const Register = () => {
   };
 
   const handleLoginClick = () => {
-    navigate("/login"); // Navigate to the login page
+    navigate("/login");
   };
 
   return (

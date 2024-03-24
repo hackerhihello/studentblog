@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 const TeacherDashboard = () => {
   const [pendingBlogs, setPendingBlogs] = useState([]);
-  const [message, setMessage] = useState(null); // State for success/error message
+  const [message, setMessage] = useState(null); 
   const navigate = useNavigate();
 
-  // Define fetchPendingBlogs function
+  
   const fetchPendingBlogs = () => {
     axios.get('http://localhost:5000/api/teacher/pending-blogs')
       .then(response => setPendingBlogs(response.data))
@@ -15,13 +15,11 @@ const TeacherDashboard = () => {
   };
 
   useEffect(() => {
-    // Fetch pending blogs for teacher initially
+    
     fetchPendingBlogs();
+    
+    const intervalId = setInterval(fetchPendingBlogs, 300000); 
 
-    // Set up a timer to fetch data periodically (every 5 minutes in this example)
-    const intervalId = setInterval(fetchPendingBlogs, 300000); // 300000 milliseconds = 5 minutes
-
-    // Clean up the timer on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
@@ -30,9 +28,8 @@ const TeacherDashboard = () => {
     axios.put(`http://localhost:5000/api/teacher/accept-blog/${id}`)
       .then(response => {
         setMessage('Blog accepted successfully');
-        // Remove the accepted blog from the list
         setPendingBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== id));
-        // Fetch pending blogs again to update the list
+       
         fetchPendingBlogs();
       })
       .catch(error => {
@@ -42,13 +39,13 @@ const TeacherDashboard = () => {
   };
 
   const handleReject = (id) => {
-    // Handle rejecting a blog
+ 
     axios.put(`http://localhost:5000/api/teacher/reject-blog/${id}`)
       .then(response => {
         setMessage('Blog rejected successfully');
-        // Remove the rejected blog from the list
+       
         setPendingBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== id));
-        // Fetch pending blogs again to update the list
+        
         fetchPendingBlogs();
       })
       .catch(error => {

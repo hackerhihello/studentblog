@@ -8,23 +8,19 @@ const CreateBlog = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Fetch email from session storage
       const email = sessionStorage.getItem('email');
       if (!email) {
         console.error('User is not logged in');
         return;
       }
 
-      // Send a POST request to create a new blog
       const response = await axios.post('http://localhost:5000/api/student/blogs', {
         email,
         title,
         content
       });
 
-      // Check if the blog was created successfully
       if (response.data.message === 'Blog created successfully') {
-        // Redirect the user to the StudentDashboard page after successful blog creation
         window.location.href = '/student';
       } else {
         console.error('Error creating blog:', response.data.message);
