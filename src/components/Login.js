@@ -42,25 +42,33 @@ const Login = () => {
 
   return (
     <div className="container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Email:</label>
-          <input type="text" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <div className="row justify-content-center mt-5">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title">Login</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Email:</label>
+                  <input type="text" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Password:</label>
+                  <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Role:</label>
+                  <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)}>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                  </select>
+                </div>
+                <button type="submit" className="btn btn-primary">Login</button>
+              </form>
+            </div>
+          </div>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Password:</label>
-          <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Role:</label>
-          <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-          </select>
-        </div>
-        <button type="submit" className="btn btn-primary">Login</button>
-      </form>
+      </div>
     </div>
   );
 };

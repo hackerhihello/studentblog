@@ -22,22 +22,31 @@ const Register = () => {
     navigate("/login"); // Navigate to the login page
   };
 
-
   return (
     <div className="container">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Email address</label>
-          <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      <div className="row justify-content-center mt-5">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title mb-4">Register</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="inputEmail" className="form-label">Email address</label>
+                  <input type="email" className="form-control" id="inputEmail" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="inputPassword" className="form-label">Password</label>
+                  <input type="password" className="form-control" id="inputPassword" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                </div>
+                <button type="submit" className="btn btn-primary">Register</button>
+              </form>
+              <div className="text-center mt-3">
+                <p>Already have an account? <button type="button" className="btn btn-link p-0" onClick={handleLoginClick}>Login</button></p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </div>
-        <button type="submit" className="btn btn-primary">Register</button>
-      </form>
-      <button type="button" className="btn btn-primary" onClick={handleLoginClick}>Login</button>
+      </div>
     </div>
   );
 };
