@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const StudentCancelPage = () => {
   const [rejectedBlogs, setRejectedBlogs] = useState([]);
+  const [showAdvertisement, setShowAdvertisement] = useState(false); // State to control the visibility of the advertisement modal
   const userEmail = sessionStorage.getItem('email');
 
   useEffect(() => {
@@ -22,6 +23,14 @@ const StudentCancelPage = () => {
     };
 
     fetchRejectedBlogs();
+    
+    // Show advertisement after 10 seconds
+    const timer = setTimeout(() => {
+      setShowAdvertisement(true);
+    }, 10000);
+
+    // Clear timer on unmount to avoid memory leaks
+    return () => clearTimeout(timer);
   }, [userEmail]);
 
   return (
@@ -34,8 +43,7 @@ const StudentCancelPage = () => {
               <div className="card-body">
                 <h5 className="card-title">{blog.title}</h5>
                 <p className="card-text">{blog.content}</p>
-                <p className="card-text" style={{color: 'red'}}>{blog.status}</p>
-                {/* <Link to={`/blogs/${blog._id}`} className="btn btn-primary">Read More</Link> */}
+                <p className="card-text" style={{ color: 'red' }}>{blog.status}</p>
               </div>
             </div>
           </div>
@@ -50,6 +58,24 @@ const StudentCancelPage = () => {
           </div>
         )}
       </div>
+      {/* Advertisement modal */}
+      {showAdvertisement && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Advertisement</h5>
+                <button type="button" className="close" aria-label="Close" onClick={() => setShowAdvertisement(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>Here goes your advertisement content. You can add images, text, or links to promote your products or services.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

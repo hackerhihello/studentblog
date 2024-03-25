@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const StudentViewPage = () => {
   const [acceptedBlogs, setAcceptedBlogs] = useState([]);
+  const [showAdvertisement, setShowAdvertisement] = useState(false); // State to control the visibility of the advertisement popup
   const userEmail = sessionStorage.getItem('email');
 
   useEffect(() => {
@@ -22,6 +23,14 @@ const StudentViewPage = () => {
     };
 
     fetchAcceptedBlogs();
+
+    // Show advertisement after 10 seconds
+    const timer = setTimeout(() => {
+      setShowAdvertisement(true);
+    }, 10000);
+
+    // Clear timer on component unmount
+    return () => clearTimeout(timer);
   }, [userEmail]);
 
   return (
@@ -50,6 +59,25 @@ const StudentViewPage = () => {
           </div>
         )}
       </div>
+      {/* Advertisement popup */}
+      {showAdvertisement && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Advertisement</h5>
+                <button type="button" className="close" aria-label="Close" onClick={() => setShowAdvertisement(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                {/* Add your advertisement content here */}
+                <p>Here goes your advertisement content. You can add images, text, or links to promote your products or services.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
