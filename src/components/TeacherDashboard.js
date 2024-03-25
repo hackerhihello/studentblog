@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 const TeacherDashboard = () => {
   const [pendingBlogs, setPendingBlogs] = useState([]);
-  const [message, setMessage] = useState(null); 
+  const [message, setMessage] = useState(null);
+  const [showAdvertisement, setShowAdvertisement] = useState(false); // State to control the display of the advertisement
   const navigate = useNavigate();
 
-  
   const fetchPendingBlogs = () => {
     axios.get('http://localhost:5000/api/teacher/pending-blogs')
       .then(response => setPendingBlogs(response.data))
@@ -15,21 +15,18 @@ const TeacherDashboard = () => {
   };
 
   useEffect(() => {
-    
     fetchPendingBlogs();
-    
-    const intervalId = setInterval(fetchPendingBlogs, 300000); 
+
+    const intervalId = setInterval(fetchPendingBlogs, 300000);
 
     return () => clearInterval(intervalId);
   }, []);
 
   const handleAccept = (id) => {
-    // Handle accepting a blog
     axios.put(`http://localhost:5000/api/teacher/accept-blog/${id}`)
       .then(response => {
         setMessage('Blog accepted successfully');
         setPendingBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== id));
-       
         fetchPendingBlogs();
       })
       .catch(error => {
@@ -39,13 +36,10 @@ const TeacherDashboard = () => {
   };
 
   const handleReject = (id) => {
- 
     axios.put(`http://localhost:5000/api/teacher/reject-blog/${id}`)
       .then(response => {
         setMessage('Blog rejected successfully');
-       
         setPendingBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== id));
-        
         fetchPendingBlogs();
       })
       .catch(error => {
@@ -61,6 +55,24 @@ const TeacherDashboard = () => {
   const handleCancelBlogs = () => {
     navigate('/cancel-blogs');
   };
+
+  useEffect(() => {
+    // Fetch advertisement content when the component mounts
+    const fetchAdvertisementContent = async () => {
+      try {
+        const timer = setTimeout(() => {
+          setShowAdvertisement(true);
+        }, 10000);
+    
+        // Clear timer on unmount to avoid memory leaks
+        return () => clearTimeout(timer);
+      } catch (error) {
+        console.error('Error fetching advertisement:', error);
+      }
+    };
+
+    fetchAdvertisementContent();
+  }, []);
 
   return (
     <div className="container mt-4">
@@ -82,6 +94,24 @@ const TeacherDashboard = () => {
           </div>
         ))}
       </div>
+      {/* Modal to display the advertisement */}
+      {showAdvertisement && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Advertisement</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => setShowAdvertisement(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>Here goes your advertisement content. You can add images, text, or links to promote your products or services.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

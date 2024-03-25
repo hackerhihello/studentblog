@@ -38,11 +38,11 @@ const StudentDashboard = () => {
   };
 
   const handleViewBlogs = () => {
-    navigate('/view-blogs');
+    navigate('/studentview-blogs');
   };
 
   const handleCancelBlogs = () => {
-    navigate('/cancel-blogs');
+    navigate('/studentcancel-blogs');
   };
 
   // Function to handle selecting a blog
@@ -60,38 +60,33 @@ const StudentDashboard = () => {
       <h2 className="mt-4">Student Dashboard</h2>
       <div className="d-flex justify-content-end mt-2">
         <button className="btn btn-primary me-2" onClick={handleCreateBlog}>Create Blog</button>
-        <button className="btn btn-primary me-2" onClick={handleViewBlogs}>View Blogs</button>
-        <button className="btn btn-primary" onClick={handleCancelBlogs}>Cancel Blogs</button>
+        <button className="btn btn-primary me-2" onClick={handleViewBlogs}>Student View Blogs</button>
+        <button className="btn btn-primary" onClick={handleCancelBlogs}>Student Cancel Blogs</button>
       </div>
       <div className="row mt-4">
-        <div className="col-md-8">
-          <ul className="list-group">
-            {blogs.map(blog => (
-              <li key={blog._id} className="list-group-item" onClick={() => handleSelectBlog(blog)}>
-                {blog.title}
-              </li>
-            ))}
-          </ul>
+      <div className="col-md-12">
+        <div className="list-group">
+          {blogs.map(blog => (
+            <Link 
+              key={blog._id} 
+              to={`/blogs/${blog._id}`} 
+              className="list-group-item list-group-item-action"
+              style={{ 
+                backgroundColor: '#f8f9fa', 
+                border: '1px solid #dee2e6', 
+                borderRadius: '5px', 
+                marginBottom: '5px', 
+                color: '#212529',
+                textDecoration: 'none', 
+                transition: 'background-color 0.3s ease', 
+              }}
+            >
+              {blog.title}
+            </Link>
+          ))}
         </div>
       </div>
-      {/* Modal to display selected blog content */}
-      {selectedBlog && (
-        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{selectedBlog.title}</h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleCloseModal}>
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <p>{selectedBlog.content}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+    </div>
       {/* Advertisement modal */}
       {showAdvertisement && (
         <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>

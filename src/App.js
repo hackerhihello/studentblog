@@ -8,6 +8,8 @@ import ViewBlogs from './components/ViewBlogs';
 import BlogDetail from './components/BlogDetail';
 import Register from './components/Register';
 import CancelBlogs from './components/CancelBlogs';
+import StudentViewPage from './components/StudentViewPage';
+import StudentCancelPage from './components/StudentCancelPage';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/teacher" element={<TeacherDashboard />} />
         <Route path="/create-blog" element={<CreateBlog />} />
         <Route path="/view-blogs" element={<ViewBlogs />} />
+        <Route path="/studentview-blogs" element={<StudentViewPage />} />
+        <Route path="/studentcancel-blogs" element={<StudentCancelPage />} />
         <Route path="/cancel-blogs" element={<CancelBlogs />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
       </Routes>

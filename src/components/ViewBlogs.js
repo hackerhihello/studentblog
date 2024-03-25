@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const ViewBlogs = () => {
   const [blogs, setBlogs] = useState([]);
+  const [showAdvertisement, setShowAdvertisement] = useState(false);
 
   useEffect(() => {
    
@@ -14,6 +15,14 @@ const ViewBlogs = () => {
         setBlogs(allBlogs);
       })
       .catch(error => console.error('Error fetching blogs:', error));
+
+      const timer = setTimeout(() => {
+        setShowAdvertisement(true);
+      }, 10000);
+  
+      // Clear timer on unmount to avoid memory leaks
+      return () => clearTimeout(timer);
+
   }, []);
 
   return (
@@ -32,6 +41,24 @@ const ViewBlogs = () => {
           </li>
         ))}
       </ul>
+       {/* Modal to display the advertisement */}
+       {showAdvertisement && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Advertisement</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => setShowAdvertisement(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>Here goes your advertisement content. You can add images, text, or links to promote your products or services.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

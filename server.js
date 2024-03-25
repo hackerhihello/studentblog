@@ -228,6 +228,57 @@ app.get('/api/blogs', async (req, res) => {
 //   }
 // });
 
+// Fetch pending blogs for a specific student (by email)
+app.get('/api/pending-blogs/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+    const student = await Student.findOne({ email }).populate({
+      path: 'blogs',
+      match: { status: 'pending' }, // Filter blogs by status
+    });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.json(student.blogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Fetch accepted blogs for a specific student (by email)
+app.get('/api/accepted-blogs/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+    const student = await Student.findOne({ email }).populate({
+      path: 'blogs',
+      match: { status: 'accepted' }, // Filter blogs by status
+    });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.json(student.blogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Fetch rejected blogs for a specific student (by email)
+app.get('/api/rejected-blogs/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+    const student = await Student.findOne({ email }).populate({
+      path: 'blogs',
+      match: { status: 'rejected' }, // Filter blogs by status
+    });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.json(student.blogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
