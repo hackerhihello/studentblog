@@ -3,7 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const StudentDashboard = () => {
   const [blogs, setBlogs] = useState([]);
+  const [selectedBlog, setSelectedBlog] = useState(null); // State to store the selected blog
   const [email, setEmail] = useState('');
+  const [showAdvertisement, setShowAdvertisement] = useState(false); // State to control the visibility of the advertisement modal
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +23,14 @@ const StudentDashboard = () => {
         setBlogs(acceptedBlogs);
       })
       .catch(error => console.error('Error fetching blogs:', error));
+
+    // Show advertisement after 10 seconds
+    const timer = setTimeout(() => {
+      setShowAdvertisement(true);
+    }, 10000);
+
+    // Clear timer on unmount to avoid memory leaks
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCreateBlog = () => {
@@ -35,6 +45,16 @@ const StudentDashboard = () => {
     navigate('/cancel-blogs');
   };
 
+  // Function to handle selecting a blog
+  const handleSelectBlog = (blog) => {
+    setSelectedBlog(blog);
+  };
+
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setSelectedBlog(null);
+  };
+
   return (
     <div className="container">
       <h2 className="mt-4">Student Dashboard</h2>
@@ -47,21 +67,50 @@ const StudentDashboard = () => {
         <div className="col-md-8">
           <ul className="list-group">
             {blogs.map(blog => (
-              <li key={blog._id} className="list-group-item">
-                <Link to={`/blogs/${blog._id}`}>{blog.title}</Link>
+              <li key={blog._id} className="list-group-item" onClick={() => handleSelectBlog(blog)}>
+                {blog.title}
               </li>
             ))}
           </ul>
         </div>
-        <div className="col-md-4">
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">Advertisement</h5>
-              <p className="card-text">Here goes your advertisement content. You can add images, text, or links to promote your products or services.</p>
+      </div>
+      {/* Modal to display selected blog content */}
+      {selectedBlog && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{selectedBlog.title}</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleCloseModal}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>{selectedBlog.content}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+      {/* Advertisement modal */}
+      {showAdvertisement && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Advertisement</h5>
+                <button type="button" className="close" aria-label="Close" onClick={() => setShowAdvertisement(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                {/* Add your advertisement content here */}
+                <p>Here goes your advertisement content. You can add images, text, or links to promote your products or services.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
